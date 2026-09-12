@@ -18,9 +18,32 @@ function formatDateTime(iso: string): string {
   return d.toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 }
 
-export function BriefingView({ data }: { data: BriefingResponse }) {
+export interface BriefingSentMeta {
+  sentAt: string; // ISO，寄出時間（BriefingLog.createdAt）
+  to: string;
+  resendEmailId: string;
+}
+
+export function BriefingView({
+  data,
+  meta,
+}: {
+  data: BriefingResponse;
+  meta?: BriefingSentMeta;
+}) {
   return (
     <div className="flex flex-col gap-5">
+      {meta && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg bg-black/[.03] px-4 py-2 text-xs text-zinc-500 dark:bg-white/[.06] dark:text-zinc-400">
+          <span>📧 已於 {formatDateTime(meta.sentAt)} 寄給 {meta.to}</span>
+          {meta.resendEmailId && (
+            <span className="text-zinc-400 dark:text-zinc-500">
+              Resend ID: {meta.resendEmailId}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* AI 統整簡報 */}
       <section className="rounded-xl border border-black/[.08] bg-white p-5 dark:border-white/[.145] dark:bg-[#0a0a0a]">
         <h2 className="mb-3 text-base font-semibold text-black dark:text-zinc-50">
